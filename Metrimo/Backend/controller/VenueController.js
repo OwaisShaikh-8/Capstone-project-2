@@ -1,5 +1,6 @@
 import Venue from "../models/venueSchema.js";
 import User from "../models/userSchema.js";
+import Booking from '../models/bookingSchema.js'; // Adjust path as needed
 import { cloudinary } from "../config/cloudinary.js";
 
 
@@ -126,8 +127,53 @@ export const getOwnerVenues = async (req, res) => {
 };
 
 
+// export const deleteVenue = async (req, res) => {
+//   console.log('dlt hit')
+//   try {
+//     const venue = await Venue.findOne({
+//       _id: req.params.venueId,
+//       ownerId: req.user.id,
+//     });
+
+//     if (!venue) {
+//       return res.status(404).json({ 
+//         success: false,
+//         message: "Venue not found or unauthorized" 
+//       });
+//     }
+
+//     // Delete all images from Cloudinary
+//     if (venue.images && venue.images.length > 0) {
+//       console.log(`🧹 Deleting ${venue.images.length} images from Cloudinary...`);
+//       const deletePromises = venue.images
+//         .filter(image => image.publicId)
+//         .map(image => 
+//           cloudinary.uploader.destroy(image.publicId)
+//             .then(() => console.log(`✅ Deleted: ${image.publicId}`))
+//             .catch(err => console.error(`❌ Failed to delete ${image.publicId}:`, err))
+//         );
+      
+//       await Promise.allSettled(deletePromises);
+//     }
+
+//     await venue.deleteOne();
+    
+//     res.json({ 
+//       success: true, 
+//       message: "Venue deleted successfully" 
+//     });
+//   } catch (error) {
+//     console.error("Delete venue error:", error);
+//     res.status(500).json({ 
+//       success: false,
+//       message: "Failed to delete venue", 
+//       error: error.message 
+//     });
+//   }
+// };
+
 export const deleteVenue = async (req, res) => {
-  console.log('dlt hit')
+  console.log('dlt hit');
   try {
     const venue = await Venue.findOne({
       _id: req.params.venueId,
@@ -135,42 +181,47 @@ export const deleteVenue = async (req, res) => {
     });
 
     if (!venue) {
-      return res.status(404).json({ 
+      return res.status(404).json({
         success: false,
-        message: "Venue not found or unauthorized" 
+        message: "Venue not found or unauthorized"
       });
     }
+
+    // Delete all bookings associated with this venue
+    const bookingsResult = await Booking.deleteMany({ venueId: req.params.venueId });
+    console.log(`🗑️ Deleted ${bookingsResult.deletedCount} bookings associated with venue`);
 
     // Delete all images from Cloudinary
     if (venue.images && venue.images.length > 0) {
       console.log(`🧹 Deleting ${venue.images.length} images from Cloudinary...`);
       const deletePromises = venue.images
         .filter(image => image.publicId)
-        .map(image => 
+        .map(image =>
           cloudinary.uploader.destroy(image.publicId)
             .then(() => console.log(`✅ Deleted: ${image.publicId}`))
             .catch(err => console.error(`❌ Failed to delete ${image.publicId}:`, err))
         );
-      
+
       await Promise.allSettled(deletePromises);
     }
 
     await venue.deleteOne();
-    
-    res.json({ 
-      success: true, 
-      message: "Venue deleted successfully" 
+
+    res.json({
+      success: true,
+      message: "Venue deleted successfully",
+      deletedBookings: bookingsResult.deletedCount
     });
+
   } catch (error) {
     console.error("Delete venue error:", error);
-    res.status(500).json({ 
+    res.status(500).json({
       success: false,
-      message: "Failed to delete venue", 
-      error: error.message 
+      message: "Failed to delete venue",
+      error: error.message
     });
   }
 };
-
 
 
 export const getVenueById = async (req, res) => {
