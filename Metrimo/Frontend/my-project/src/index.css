@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto';
+}
+
+.container{
+    max-width: 1400px;
+    width: 100%;
+    margin: 0px auto;
+    padding: 0px 30px;
+}
+
+.banner {
+  background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+              url('./assets/images/banner-background-img.png');
+  background-size: cover;
+  background-position: center;
+}
+
+.banner-heading,.banner-heading span,.about-heading{
+    font-family: 'oswald';
+}
+html {
+  scroll-behavior: smooth;
+}
