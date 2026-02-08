@@ -10,8 +10,8 @@ export const injectStore = (_store) => {
 };
 
 const axiosInstance = axios.create({
-  // baseURL: "http://localhost:9000/api",
-  baseURL: import.meta.env.BACKEND_API_URL,
+  baseURL: "https://capstone-project-2-production.up.railway.app/api",
+  // baseURL: import.meta.env.VITE_BACKEND_API_URL,
   withCredentials: true,
 });
 
