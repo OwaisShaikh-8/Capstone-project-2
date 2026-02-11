@@ -196,7 +196,7 @@ const NormalBookingForm = () => {
                 Total Amount:
               </span>
               <span className="text-3xl font-bold text-red-600">
-                ₹{activeVenue.pricePerDay?.toLocaleString() || "0"}
+                Rs{activeVenue.pricePerDay?.toLocaleString() || "0"}
               </span>
             </div>
           </div>
